@@ -15,7 +15,9 @@ const ResultsList = () => {
   const [results, setResults] = useState([]);
   const [formValues, setFormValues] = useState(initialFormState);
   const [formDebouncedValues] = useDebounce(formValues, 500);
+  const [isLoading, setIsLoading] = useState(false);
   const WikiSearch = (term) => {
+    setIsLoading(true);
     if (!term) {
       return;
     }
@@ -28,6 +30,7 @@ const ResultsList = () => {
       })
       .then((data) => {
         setResults([...data.query.search]);
+        setIsLoading(false);
       });
   };
 
@@ -46,6 +49,7 @@ const ResultsList = () => {
 
   const resetInputs = () => {
     setFormValues(initialFormState);
+    setResults([]);
   };
 
   const handleSearch = () => {
@@ -83,6 +87,11 @@ const ResultsList = () => {
           </Button>
         </FormRow>
       </Wrapper>
+      {isLoading === true && formValues.search.length > 0 && (
+        <Wrapper>
+          <StyledTitle>Trwa szukanie...</StyledTitle>
+        </Wrapper>
+      )}
       {results.length > 0 && (
         <Wrapper>
           <StyledTitle>Search results</StyledTitle>
